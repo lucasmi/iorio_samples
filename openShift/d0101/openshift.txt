@@ -8,11 +8,4 @@ oc projects
 oc get pods
 oc logs -f pods/iorio-hello-1-build 
 
-
-
-
-
-
-
-https://samples.openweathermap.org/data/2.5/weather?q=London,uk&appid=d54de7a2f07708c6c62e2a8cbd387329
-d54de7a2f07708c6c62e2a8cbd387329
+oc project <name project>
