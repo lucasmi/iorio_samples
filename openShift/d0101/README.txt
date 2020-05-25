@@ -1,1 +1,1 @@
-Cruso de opemShift da RedHAt
+Curso de OpenShift
