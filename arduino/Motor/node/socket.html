@@ -1,0 +1,73 @@
+<html>
+
+<head>
+    <script type="text/javascript" src="jquery-3.1.1.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/index.css">
+</head>
+
+<body>
+    
+    <div class="base-control">
+        <div class="manopla-control"></div>
+
+
+    </div>
+
+    <script>
+    var interval = null;
+    $(function() {
+
+        window.WebSocket = window.WebSocket || window.MozWebSocket;
+
+        //Conecta no socket
+        var connection = new WebSocket('ws://127.0.0.1:1337');
+
+        connection.onopen = function() {
+
+            // connection is opened and ready to use
+            var ligar = true;
+            interval = setInterval(function() {
+                var sendJson = new Object();
+                sendJson.message = "MENSAGEM DO HTML";
+                sendJson.cmd = "led";
+                if (ligar) {
+                    sendJson.args = ['1'];
+                    ligar = false;
+                } else {
+                    sendJson.args = ['0'];
+                    ligar = true;
+                }
+
+                connection.send(JSON.stringify(sendJson));
+                console.log("ENVIADO:" + sendJson.message);
+            }, 3000);
+
+
+        };
+
+        connection.onerror = function(error) {
+            // an error occurred when sending/receiving data
+            console.log("ERRO");
+            clearInterval(interval);
+        };
+
+        connection.onmessage = function(message) {
+            // try to decode json (I assume that each message from server is json)
+            try {
+                var receiveJson = JSON.parse(message.data);
+            } catch (e) {
+                console.log('This doesn\'t look like a valid JSON: ', message.data);
+                return;
+            }
+
+            //mostra console
+            console.log("CHEGOU:" + receiveJson.message)
+        };
+
+
+
+    });
+    </script>
+</body>
+
+</html>

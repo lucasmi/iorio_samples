@@ -1,0 +1,32 @@
+body{
+ background-color: #2d2b2b;
+}
+
+.base-control{
+	background-image:  url(../img/shadedDark11.png);
+	background-repeat: no-repeat;
+	height: 160px;
+	width: 160px;
+	/*border: 1px solid black;*/
+	cursor: pointer;
+	position: relative;
+}
+
+.manopla-control{
+	position: absolute;
+
+
+	top: -webkit-calc(50% - 25px);
+	top: -moz-calc(50% - 25px);
+	top: calc(50% - 25px);
+
+	left: -webkit-calc(50% - 25px);
+	left: -moz-calc(50% - 25px);
+	left: calc(50% - 25px);
+
+	background-image:  url(../img/shadedDark01.png);
+	background-size: 100% 100%;
+	height: 50px;
+	width: 50px;
+	/*border: 1px solid black;*/
+}
