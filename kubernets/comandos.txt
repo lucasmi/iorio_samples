@@ -107,3 +107,13 @@ http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kube
 
 sudo apt-get install apache2-utils
 htpasswd -Bc htpasswd registry
+
+
+*************************** DOCKER
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+sudo usermod -aG docker pi
+
+****************** Creating Namespace
+kubectl create namespace guilda-code
+kubectl get namespaces
