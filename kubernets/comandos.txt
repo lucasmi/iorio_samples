@@ -1,0 +1,109 @@
+
+
+Install k3s
+curl -sfL https://get.k3s.io | sh -
+sudo systemctl status k3s
+
+Pegar o token do master
+sudo cat /var/lib/rancher/k3s/server/node-token
+
+Worker:
+/boot/cmdline.txt
+cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory
+
+Comando manual
+export K3S_TOKEN="K106b514997a9a0c24bae95bfa83c75ae6abaa86b9a57be0c79339f6c621d0495ae::server:e07e5680599620c367f97b2b57176af0"
+export K3S_URL="https://192.168.0.50:6443"
+k3s agent --server ${K3S_URL} --token ${K3S_TOKEN}
+
+Commando automatico
+curl -sfL https://get.k3s.io | K3S_URL=https://192.168.0.50:6443 K3S_TOKEN=K106b514997a9a0c24bae95bfa83c75ae6abaa86b9a57be0c79339f6c621d0495ae::server:e07e5680599620c367f97b2b57176af0 sh -
+
+sudo /usr/local/bin/k3s-uninstall.sh
+sudo systemctl stop k3s
+sudo systemctl disable k3s
+sudo rm -rf /var/lib/rancher
+
+************** comandos kubernets
+kubectl get nodes
+kubectl label node raspberrypi2 node-role.kubernetes.io/worker=worker
+
+Verifica servicos instalados
+kubectl get svc
+kubectl expose deployment bb-entrypoint --type NodePort  #EXPOE
+kubeclt get deplymentss.app #Ver app instalados
+kubectl get deployments
+kubectl get services #mostra os servicos ativos
+kubeclt get scale deplyment --replicas=100 nginx
+
+kubectl apply -f bb.yaml # INSTALANDO O APP
+kubectl delete -f bb.yaml  # APAGA APP
+
+kubectl proxy
+****************** instalando HEML
+Helm Instalacao do ADM de pacotes
+https://helm.sh/docs/intro/install/
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 
+chmod 700 get_helm.sh
+./get_helm.sh
+helm installed into /usr/local/bin/helm
+
+
+
+helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+helm search repo stable
+
+
+https://192.168.0.50:6443/
+cat /var/lib/rancher/k3s/server/cred/passwd
+
+
+Ver todos os pods instalados
+kubectl get pods --all-namespaces
+
+************************ INSTALANDO DASH BOARD
+Instalando pod de dashboard
+
+APAGANDO DASHBOARD
+sudo k3s kubectl delete ns kubernetes-dashboard
+
+INSTALANDO
+- dashboard.admin-user.yml
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: admin-user
+  namespace: kubernetes-dashboard
+
+- dashboard.admin-user-role.yml
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: admin-user
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: admin-user
+  namespace: kubernetes-dashboard
+
+
+GITHUB_URL=https://github.com/kubernetes/dashboard/releases
+VERSION_KUBE_DASHBOARD=$(curl -w '%{url_effective}' -I -L -s -S ${GITHUB_URL}/latest -o /dev/null | sed -e 's|.*/||')
+sudo k3s kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/${VERSION_KUBE_DASHBOARD}/aio/deploy/recommended.yaml -f dashboard.admin-user.yml -f dashboard.admin-user-role.yml
+
+CONFIGURANDO USUARIO
+sudo k3s kubectl -n kubernetes-dashboard describe secret admin-user-token | grep ^token
+
+PROXY PARA ACESSAR
+kubectl proxy
+http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/login
+
+****************************** instalando docker on k3s
+
+sudo apt-get install apache2-utils
+htpasswd -Bc htpasswd registry
